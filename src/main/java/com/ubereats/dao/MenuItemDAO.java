@@ -48,4 +48,69 @@ public class MenuItemDAO {
         }
         return 0;
     }
+
+    // In MenuItemDAO
+    public List<MenuItem> findAll() {
+        List<MenuItem> items = new ArrayList<>();
+        String sql = "SELECT id, restaurant_id, name, description, price FROM menu_items";
+        try (Connection conn = DatabaseUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                MenuItem item = new MenuItem();
+                item.setId(rs.getInt("id"));
+                item.setRestaurantId(rs.getInt("restaurant_id"));
+                item.setName(rs.getString("name"));
+                item.setDescription(rs.getString("description"));
+                item.setPrice(rs.getDouble("price"));
+                items.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    public boolean save(MenuItem item) {
+        String sql = "INSERT INTO menu_items (restaurant_id, name, description, price) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, item.getRestaurantId());
+            stmt.setString(2, item.getName());
+            stmt.setString(3, item.getDescription());
+            stmt.setDouble(4, item.getPrice());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean update(MenuItem item) {
+        String sql = "UPDATE menu_items SET restaurant_id=?, name=?, description=?, price=? WHERE id=?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, item.getRestaurantId());
+            stmt.setString(2, item.getName());
+            stmt.setString(3, item.getDescription());
+            stmt.setDouble(4, item.getPrice());
+            stmt.setInt(5, item.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean delete(int id) {
+        String sql = "DELETE FROM menu_items WHERE id=?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

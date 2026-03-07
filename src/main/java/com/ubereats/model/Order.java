@@ -1,6 +1,7 @@
 package com.ubereats.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Order {
     private int id;
@@ -8,6 +9,7 @@ public class Order {
     private String customerAddress;
     private LocalDateTime orderDate;
     private double total;
+    private List<OrderItem> items;
 
     public Order() {}
 
@@ -34,4 +36,12 @@ public class Order {
 
     public double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
 }
