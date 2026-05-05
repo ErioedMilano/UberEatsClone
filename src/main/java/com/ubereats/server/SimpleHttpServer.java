@@ -12,26 +12,18 @@ public class SimpleHttpServer {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        // Publieke endpoints (geen auth nodig)
+        // Publieke endpoints (geen auth)
         server.createContext("/api/restaurants", new RestaurantController());
-        server.createContext("/api/restaurants/", new MenuController());
+        server.createContext("/api/restaurants/", new MenuController()); // voor klant-menu
         server.createContext("/api/orders", new OrderController());
 
-        // Admin endpoints (beveiligd met token)
-        server.createContext("/api/admin/login", new AdminAuthController());
-        server.createContext("/api/admin/logout", new AdminAuthController()); // logout via zelfde controller
-
-        // Beveiligde admin endpoints (via filter)
-        server.createContext("/api/admin/restaurants", new AdminAuthFilter(new AdminRestaurantController()));
-        // Later: /api/admin/menu, /api/admin/orders, /api/admin/dashboard
-
-        // Admin endpoints (beveiligd met token)
+        // Admin endpoints (geen auth)
         server.createContext("/api/admin/login", new AdminAuthController());
         server.createContext("/api/admin/logout", new AdminAuthController());
 
-// Beveiligde admin endpoints (via filter)
+        // Beveiligde admin endpoints
         server.createContext("/api/admin/restaurants", new AdminAuthFilter(new AdminRestaurantController()));
-        server.createContext("/api/admin/menu", new AdminAuthFilter(new AdminMenuController()));
+        server.createContext("/api/admin/menu", new AdminAuthFilter(new AdminMenuController())); // nieuw
         server.createContext("/api/admin/orders", new AdminAuthFilter(new AdminOrderController()));
         server.createContext("/api/admin/dashboard", new AdminAuthFilter(new AdminDashboardController()));
 

@@ -29,7 +29,8 @@ public class DashboardDAO {
                 list.add(new RestaurantStat(
                         rs.getInt("id"),
                         rs.getString("name"),
-                        rs.getInt("order_count")
+                        rs.getInt("order_count"),
+                        0 // totalItems (optioneel)
                 ));
             }
         } catch (SQLException e) {
@@ -50,16 +51,33 @@ public class DashboardDAO {
             stmt.setInt(1, limit);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
+                int totalQty = rs.getInt("total_quantity");
                 list.add(new MenuItemStat(
                         rs.getInt("id"),
                         rs.getString("name"),
-                        rs.getInt("total_quantity")
+                        0.0, // price (niet in query)
+                        0,   // orderCount (niet in query)
+                        totalQty
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getTotalOrders() {
+        String sql = "SELECT COUNT(*) as total FROM orders";
+        try (Connection conn = DatabaseUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public int getTotalOrdersToday() {

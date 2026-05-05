@@ -31,8 +31,9 @@ public class AdminDashboardController implements HttpHandler {
                 int totalOrdersToday = dashboardDAO.getTotalOrdersToday();
                 double revenueToday = dashboardDAO.getRevenueToday();
                 Map<String, Integer> ordersByHour = dashboardDAO.getOrdersByLast24Hours();
+                int totalOrders = dashboardDAO.getTotalOrders();
 
-                DashboardResponse response = new DashboardResponse(topRestaurants, topDishes, totalOrdersToday, revenueToday, ordersByHour);
+                DashboardResponse response = new DashboardResponse(topRestaurants, topDishes, totalOrdersToday, revenueToday, ordersByHour,totalOrders);
                 String jsonResponse = JsonUtils.toJson(response);
                 sendResponse(exchange, 200, jsonResponse);
             } catch (Exception e) {

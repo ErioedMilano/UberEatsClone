@@ -21,16 +21,18 @@ public class AdminRestaurantController implements HttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        // GEEN CORS-HEADERS HIER – de filter doet dat al
+        // GEEN CORS-HEADERS – filter doet dat
 
         // GET alle restaurants
         if ("GET".equalsIgnoreCase(method) && path.equals("/api/admin/restaurants")) {
             List<Restaurant> restaurants = restaurantDAO.findAll();
             String response = JsonUtils.toJson(restaurants);
             sendResponse(exchange, 200, response);
+            return;
         }
+
         // POST nieuw restaurant
-        else if ("POST".equalsIgnoreCase(method) && path.equals("/api/admin/restaurants")) {
+        if ("POST".equalsIgnoreCase(method) && path.equals("/api/admin/restaurants")) {
             InputStream is = exchange.getRequestBody();
             String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             Restaurant newRestaurant = JsonUtils.fromJson(body, Restaurant.class);
@@ -40,9 +42,11 @@ public class AdminRestaurantController implements HttpHandler {
             } else {
                 sendResponse(exchange, 500, "{\"error\":\"Kon restaurant niet toevoegen\"}");
             }
+            return;
         }
-        // PUT bestaand restaurant (bijv. /api/admin/restaurants/5)
-        else if ("PUT".equalsIgnoreCase(method) && path.matches("/api/admin/restaurants/\\d+")) {
+
+        // PUT /api/admin/restaurants/{id}
+        if ("PUT".equalsIgnoreCase(method) && path.matches("/api/admin/restaurants/\\d+")) {
             String[] parts = path.split("/");
             int id = Integer.parseInt(parts[parts.length - 1]);
             InputStream is = exchange.getRequestBody();
@@ -55,9 +59,11 @@ public class AdminRestaurantController implements HttpHandler {
             } else {
                 sendResponse(exchange, 404, "{\"error\":\"Restaurant niet gevonden\"}");
             }
+            return;
         }
-        // DELETE restaurant (bijv. /api/admin/restaurants/5)
-        else if ("DELETE".equalsIgnoreCase(method) && path.matches("/api/admin/restaurants/\\d+")) {
+
+        // DELETE /api/admin/restaurants/{id}
+        if ("DELETE".equalsIgnoreCase(method) && path.matches("/api/admin/restaurants/\\d+")) {
             String[] parts = path.split("/");
             int id = Integer.parseInt(parts[parts.length - 1]);
             boolean success = restaurantDAO.delete(id);
@@ -66,9 +72,10 @@ public class AdminRestaurantController implements HttpHandler {
             } else {
                 sendResponse(exchange, 404, "{\"error\":\"Restaurant niet gevonden\"}");
             }
-        } else {
-            sendResponse(exchange, 404, "{\"error\":\"Not found\"}");
+            return;
         }
+
+        sendResponse(exchange, 404, "{\"error\":\"Not found\"}");
     }
 
     private void sendResponse(HttpExchange exchange, int status, String response) throws IOException {

@@ -6,7 +6,7 @@ public class RestaurantStat {
     private int orderCount;
     private int totalItems;
 
-    public RestaurantStat(int id, String name, int orderCount) {}
+    public RestaurantStat() {}
 
     public RestaurantStat(int id, String name, int orderCount, int totalItems) {
         this.id = id;

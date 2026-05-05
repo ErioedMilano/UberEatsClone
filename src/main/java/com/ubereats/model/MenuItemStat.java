@@ -7,7 +7,7 @@ public class MenuItemStat {
     private int orderCount;
     private int totalQuantity;
 
-    public MenuItemStat(int id, String name, int totalQuantity) {}
+    public MenuItemStat() {}
 
     public MenuItemStat(int id, String name, double price, int orderCount, int totalQuantity) {
         this.id = id;
