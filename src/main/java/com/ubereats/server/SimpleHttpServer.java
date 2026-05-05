@@ -10,11 +10,12 @@ import java.net.InetSocketAddress;
 public class SimpleHttpServer {
 
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
-        // Publieke endpoints (geen auth)
+        // Publieke endpoints
         server.createContext("/api/restaurants", new RestaurantController());
-        server.createContext("/api/restaurants/", new MenuController()); // voor klant-menu
+        server.createContext("/api/restaurants/", new MenuController());
         server.createContext("/api/orders", new OrderController());
 
         // Admin endpoints (geen auth)
@@ -23,12 +24,12 @@ public class SimpleHttpServer {
 
         // Beveiligde admin endpoints
         server.createContext("/api/admin/restaurants", new AdminAuthFilter(new AdminRestaurantController()));
-        server.createContext("/api/admin/menu", new AdminAuthFilter(new AdminMenuController())); // nieuw
+        server.createContext("/api/admin/menu", new AdminAuthFilter(new AdminMenuController()));
         server.createContext("/api/admin/orders", new AdminAuthFilter(new AdminOrderController()));
         server.createContext("/api/admin/dashboard", new AdminAuthFilter(new AdminDashboardController()));
 
         server.setExecutor(null);
         server.start();
-        System.out.println("Server started on port 8080");
+        System.out.println("Server started on port " + port);
     }
 }
