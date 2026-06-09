@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseUtil {
-    private static final String DB_URL = System.getenv("DB_URL") != null ? System.getenv("DB_URL") : "jdbc:mysql://localhost:3306/ubereats?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private static final String DB_USER = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "root";
-    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "12345678";
+    private static final String DB_URL = System.getenv("DB_URL");
+    private static final String DB_USER = System.getenv("DB_USER");
+    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
 
     static {
         try {
@@ -18,6 +18,9 @@ public class DatabaseUtil {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
+            throw new SQLException("Database environment variables not set");
+        }
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 }
