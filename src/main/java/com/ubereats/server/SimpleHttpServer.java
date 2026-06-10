@@ -13,6 +13,14 @@ public class SimpleHttpServer {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
+        // health check endpoint te maken
+        server.createContext("/", exchange -> {
+            String response = "OK";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+            exchange.getResponseBody().write(response.getBytes());
+            exchange.getResponseBody().close();
+        });
+
         // Publieke endpoints
         server.createContext("/api/restaurants", new RestaurantController());
         server.createContext("/api/restaurants/", new MenuController());
